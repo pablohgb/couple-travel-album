@@ -4,10 +4,12 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { deletePhoto } from "@/app/mapa/photo-actions";
+import { PhotoLightbox } from "@/components/photos/photo-lightbox";
 import { formatPhotoDate } from "@/lib/photo-dates";
 
 export function PhotoGallery({ photos, placeName, place }) {
   const router = useRouter();
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
   const [deletingPhotoId, setDeletingPhotoId] = useState(null);
   const [error, setError] = useState(null);
   const [isDeleting, startDelete] = useTransition();
@@ -37,6 +39,10 @@ export function PhotoGallery({ photos, placeName, place }) {
         return;
       }
 
+      if (selectedPhoto?.id === photo.id) {
+        setSelectedPhoto(null);
+      }
+
       setDeletingPhotoId(null);
       router.refresh();
     });
@@ -54,11 +60,17 @@ export function PhotoGallery({ photos, placeName, place }) {
               key={photo.id}
               className="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100"
             >
-              <img
-                src={photo.thumbnail_url || photo.url}
-                alt={photo.title || placeName}
-                className="aspect-square w-full object-cover"
-              />
+              <button
+                type="button"
+                onClick={() => setSelectedPhoto(photo)}
+                className="block w-full text-left"
+              >
+                <img
+                  src={photo.thumbnail_url || photo.url}
+                  alt={photo.title || placeName}
+                  className="aspect-square w-full object-cover"
+                />
+              </button>
 
               <button
                 type="button"
@@ -82,6 +94,12 @@ export function PhotoGallery({ photos, placeName, place }) {
           {error}
         </p>
       ) : null}
+
+      <PhotoLightbox
+        photo={selectedPhoto}
+        place={place}
+        onClose={() => setSelectedPhoto(null)}
+      />
     </div>
   );
 }

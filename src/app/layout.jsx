@@ -14,6 +14,15 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Nuestro álbum de viajes",
   description: "Álbum privado de viajes y recuerdos de pareja.",
+  applicationName: "Álbum",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Álbum",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export default function RootLayout({ children }) {

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AlbumView } from "@/components/album/album-view";
+import { PageBackground } from "@/components/layout/page-background";
 import { signAlbumPhotos } from "@/lib/photos";
 import { createClient } from "@/lib/supabase/server";
 
@@ -44,12 +45,12 @@ export default async function AlbumPage() {
   const signedPhotos = await signAlbumPhotos(supabase, photos ?? []);
 
   return (
-    <div className="min-h-full bg-gradient-to-b from-rose-50 via-white to-indigo-50">
+    <PageBackground>
       <header className="border-b border-rose-100/80 bg-white/70 backdrop-blur">
         <div className="mx-auto max-w-6xl px-6 py-5">
           <Link
             href="/"
-            className="text-sm font-medium text-rose-600 hover:text-rose-700"
+            className="text-sm font-medium text-[#FF8A8A] hover:text-rose-700"
           >
             ← Volver al inicio
           </Link>
@@ -63,6 +64,6 @@ export default async function AlbumPage() {
       <main className="mx-auto max-w-6xl px-6 py-8">
         <AlbumView photos={signedPhotos} />
       </main>
-    </div>
+    </PageBackground>
   );
 }

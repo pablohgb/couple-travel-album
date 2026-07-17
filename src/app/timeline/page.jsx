@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { TimelineView } from "@/components/timeline/timeline-view";
+import { PageBackground } from "@/components/layout/page-background";
 import { signPlacesPhotos } from "@/lib/photos";
 import { createClient } from "@/lib/supabase/server";
 
@@ -51,12 +52,12 @@ export default async function TimelinePage() {
   );
 
   return (
-    <div className="min-h-full bg-gradient-to-b from-rose-50 via-white to-indigo-50">
+    <PageBackground>
       <header className="border-b border-rose-100/80 bg-white/70 backdrop-blur">
-        <div className="mx-auto max-w-3xl px-6 py-5">
+        <div className="mx-auto max-w-5xl px-6 py-5">
           <Link
             href="/"
-            className="text-sm font-medium text-rose-600 hover:text-rose-700"
+            className="text-sm font-medium text-[#FF8A8A] hover:text-rose-700"
           >
             ← Volver al inicio
           </Link>
@@ -64,14 +65,14 @@ export default async function TimelinePage() {
             Línea temporal
           </h1>
           <p className="text-sm text-zinc-500">
-            Vuestros destinos ordenados cronológicamente.
+            Elige un año para ver los viajes de esa etapa.
           </p>
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-6 py-8">
+      <main className="mx-auto max-w-5xl px-6 py-8">
         <TimelineView places={placesWithSignedPhotos} />
       </main>
-    </div>
+    </PageBackground>
   );
 }

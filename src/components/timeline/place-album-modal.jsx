@@ -2,10 +2,14 @@
 
 import { useState } from "react";
 
+import { PhotoLightbox } from "@/components/photos/photo-lightbox";
+import { downloadAlbum } from "@/lib/download-photos";
 import { formatPhotoDate } from "@/lib/photo-dates";
 
 export function PlaceAlbumModal({ place, open, onClose }) {
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [isDownloadingAlbum, setIsDownloadingAlbum] = useState(false);
+  const [albumError, setAlbumError] = useState(null);
   const photos = place?.photos ?? [];
 
   if (!open || !place) {
@@ -14,7 +18,21 @@ export function PlaceAlbumModal({ place, open, onClose }) {
 
   function handleClose() {
     setSelectedPhoto(null);
+    setAlbumError(null);
     onClose();
+  }
+
+  async function handleDownloadAlbum() {
+    setAlbumError(null);
+    setIsDownloadingAlbum(true);
+
+    try {
+      await downloadAlbum(photos, place.name);
+    } catch (error) {
+      setAlbumError(error.message || "No se pudo descargar el álbum.");
+    } finally {
+      setIsDownloadingAlbum(false);
+    }
   }
 
   return (
@@ -27,7 +45,7 @@ export function PlaceAlbumModal({ place, open, onClose }) {
           className="flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl"
           onClick={(event) => event.stopPropagation()}
         >
-          <div className="flex items-center justify-between border-b border-zinc-200 px-6 py-4">
+          <div className="flex items-center justify-between gap-3 border-b border-zinc-200 px-6 py-4">
             <div>
               <h2 className="text-xl font-semibold text-zinc-900">
                 Álbum de {place.name}
@@ -36,14 +54,32 @@ export function PlaceAlbumModal({ place, open, onClose }) {
                 {photos.length} foto{photos.length === 1 ? "" : "s"}
               </p>
             </div>
-            <button
-              type="button"
-              onClick={handleClose}
-              className="rounded-full border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50"
-            >
-              Cerrar
-            </button>
+            <div className="flex shrink-0 items-center gap-2">
+              {photos.length ? (
+                <button
+                  type="button"
+                  onClick={handleDownloadAlbum}
+                  disabled={isDownloadingAlbum}
+                  className="rounded-full border border-rose-200 px-3 py-1.5 text-sm font-medium text-rose-700 transition hover:bg-rose-50 disabled:opacity-60"
+                >
+                  {isDownloadingAlbum ? "Preparando..." : "Descargar álbum"}
+                </button>
+              ) : null}
+              <button
+                type="button"
+                onClick={handleClose}
+                className="rounded-full border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50"
+              >
+                Cerrar
+              </button>
+            </div>
           </div>
+
+          {albumError ? (
+            <p className="border-b border-red-100 bg-red-50 px-6 py-3 text-sm text-red-700">
+              {albumError}
+            </p>
+          ) : null}
 
           <div className="overflow-y-auto px-6 py-6">
             {photos.length ? (
@@ -75,35 +111,11 @@ export function PlaceAlbumModal({ place, open, onClose }) {
         </div>
       </div>
 
-      {selectedPhoto ? (
-        <div
-          className="fixed inset-0 z-[3100] flex items-center justify-center bg-zinc-950/90 p-4"
-          onClick={() => setSelectedPhoto(null)}
-        >
-          <div
-            className="max-h-[95vh] w-full max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-4">
-              <p className="text-sm text-zinc-500">
-                {formatPhotoDate({ ...selectedPhoto, place })}
-              </p>
-              <button
-                type="button"
-                onClick={() => setSelectedPhoto(null)}
-                className="rounded-full border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50"
-              >
-                Cerrar
-              </button>
-            </div>
-            <img
-              src={selectedPhoto.url}
-              alt={selectedPhoto.title || place.name}
-              className="max-h-[80vh] w-full object-contain bg-white"
-            />
-          </div>
-        </div>
-      ) : null}
+      <PhotoLightbox
+        photo={selectedPhoto}
+        place={place}
+        onClose={() => setSelectedPhoto(null)}
+      />
     </>
   );
 }

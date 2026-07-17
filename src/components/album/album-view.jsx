@@ -5,6 +5,7 @@ import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { deletePhoto } from "@/app/mapa/photo-actions";
+import { PhotoLightbox } from "@/components/photos/photo-lightbox";
 import {
   filterAlbumPhotos,
   formatPhotoDate,
@@ -192,40 +193,11 @@ export function AlbumView({ photos }) {
         </div>
       )}
 
-      {selectedPhoto ? (
-        <div
-          className="fixed inset-0 z-[3000] flex items-center justify-center bg-zinc-950/80 p-4"
-          onClick={() => setSelectedPhoto(null)}
-        >
-          <div
-            className="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-3xl bg-white shadow-2xl"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-4">
-              <div>
-                <p className="font-semibold text-zinc-900">
-                  {selectedPhoto.place?.name}
-                </p>
-                <p className="text-sm text-zinc-500">
-                  {formatPhotoDate(selectedPhoto)}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedPhoto(null)}
-                className="rounded-full border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 hover:bg-zinc-50"
-              >
-                Cerrar
-              </button>
-            </div>
-            <img
-              src={selectedPhoto.url}
-              alt={selectedPhoto.title || selectedPhoto.place?.name || "Fotografía"}
-              className="max-h-[70vh] w-full object-contain bg-white"
-            />
-          </div>
-        </div>
-      ) : null}
+      <PhotoLightbox
+        photo={selectedPhoto}
+        place={selectedPhoto?.place}
+        onClose={() => setSelectedPhoto(null)}
+      />
     </>
   );
 }
