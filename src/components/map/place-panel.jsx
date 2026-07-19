@@ -84,7 +84,7 @@ export function PlacePanel({ place, onClose }) {
 
   return (
     <aside className="absolute inset-x-0 bottom-0 z-[1000] max-h-[70vh] overflow-y-auto rounded-t-3xl border border-rose-100 bg-white shadow-2xl md:inset-y-0 md:right-0 md:left-auto md:max-h-none md:w-[400px] md:rounded-none md:rounded-l-3xl">
-      <div className="sticky top-0 flex items-center justify-between border-b border-rose-100 bg-white/95 px-5 py-4 backdrop-blur">
+      <div className="sticky top-0 z-20 flex items-center justify-between border-b border-rose-100 bg-white px-5 py-4">
         <div>
           {!isEditing ? (
             <span
